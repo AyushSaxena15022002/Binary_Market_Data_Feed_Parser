@@ -14,14 +14,17 @@ struct PriceLevel {
     PriceLevel() : price(0), total_shares(0) {}
     explicit PriceLevel(Price p) : price(p), total_shares(0) {}
 
-    void add_order(Order* order) {
+    std::list<Order*>::iterator add_order(Order* order) {
         orders.push_back(order);
         total_shares += order->shares;
+        auto it = orders.end();
+        --it;
+        return it;
     }
 
-    void remove_order(Order* order) {
-        orders.remove(order);
-        total_shares -= order->shares;
+    void remove_order(std::list<Order*>::iterator it) {
+        total_shares -= (*it)->shares;
+        orders.erase(it);
     }
 
     void reduce_shares(Shares amount) {

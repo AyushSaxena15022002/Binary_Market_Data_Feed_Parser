@@ -1,6 +1,7 @@
 #pragma once
 
 #include "common/types.h"
+#include <list>
 
 namespace itch {
 
@@ -10,6 +11,7 @@ struct Order {
     Shares shares;
     Price price;
     Stock stock;
+    std::list<Order*>::iterator level_iter;
 
     Order() : ref(0), side(Side::Buy), shares(0), price(0), stock{} {}
 

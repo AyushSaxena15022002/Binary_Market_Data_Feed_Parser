@@ -20,6 +20,11 @@ OrderBook* BookManager::get_or_create_book(const Stock& symbol) {
 
     OrderBook* book = new OrderBook(symbol);
     books_[symbol] = book;
+
+    if (books_.size() == 1) {
+        books_.reserve(8);
+    }
+
     return book;
 }
 

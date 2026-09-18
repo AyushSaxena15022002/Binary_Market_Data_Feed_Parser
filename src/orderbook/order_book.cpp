@@ -7,19 +7,17 @@ namespace itch {
 OrderBook::OrderBook(const Stock& symbol) : symbol_(symbol) {}
 
 OrderBook::~OrderBook() {
-    for (auto& pair : orders_) {
-        delete pair.second;
-    }
+    // MemoryPool cleans up all allocated blocks upon destruction
 }
 
 void OrderBook::add_order(OrderRef ref, Side side, Shares shares, Price price) {
-    Order* order = new Order(ref, side, shares, price, symbol_);
+    Order* order = order_pool_.allocate(ref, side, shares, price, symbol_);
     orders_[ref] = order;
 
     if (side == Side::Buy) {
-        bids_[price].add_order(order);
+        order->level_iter = bids_[price].add_order(order);
     } else {
-        asks_[price].add_order(order);
+        order->level_iter = asks_[price].add_order(order);
     }
 }
 
@@ -39,7 +37,7 @@ void OrderBook::cancel_order(OrderRef ref, Shares cancelled_shares) {
     if (order->shares == 0) {
         remove_order_from_book(order);
         orders_.erase(it);
-        delete order;
+        order_pool_.deallocate(order);
     }
 }
 
@@ -54,7 +52,7 @@ void OrderBook::delete_order(OrderRef ref) {
     Order* order = it->second;
     remove_order_from_book(order);
     orders_.erase(it);
-    delete order;
+    order_pool_.deallocate(order);
 }
 
 void OrderBook::replace_order(OrderRef old_ref, OrderRef new_ref, Shares new_shares, Price new_price) {
@@ -71,13 +69,13 @@ void OrderBook::replace_order(OrderRef old_ref, OrderRef new_ref, Shares new_sha
 void OrderBook::remove_order_from_book(Order* order) {
     if (order->side == Side::Buy) {
         auto& level = bids_[order->price];
-        level.remove_order(order);
+        level.remove_order(order->level_iter);
         if (level.orders.empty()) {
             bids_.erase(order->price);
         }
     } else {
         auto& level = asks_[order->price];
-        level.remove_order(order);
+        level.remove_order(order->level_iter);
         if (level.orders.empty()) {
             asks_.erase(order->price);
         }

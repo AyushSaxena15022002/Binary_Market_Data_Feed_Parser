@@ -1,6 +1,7 @@
 #pragma once
 
 #include "common/types.h"
+#include "common/memory_pool.h"
 #include "orderbook/order.h"
 #include "orderbook/price_level.h"
 #include <map>
@@ -34,6 +35,7 @@ private:
     std::map<Price, PriceLevel, std::greater<Price>> bids_;
     std::map<Price, PriceLevel, std::less<Price>> asks_;
     std::unordered_map<OrderRef, Order*> orders_;
+    MemoryPool<Order, 4096> order_pool_;
 
     void remove_order_from_book(Order* order);
 };
