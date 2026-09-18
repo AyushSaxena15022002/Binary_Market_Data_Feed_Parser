@@ -191,7 +191,10 @@ def generate_itch_file(output_path: str, num_messages: int):
                 symbol = random.choice(SYMBOLS)
                 side   = random.choice([b'B', b'S'])
                 base   = BASE_PRICES[symbol]
-                price  = max(10_000, base + random.randint(-5_000, 5_000))
+                if side == b'B':
+                    price = max(10_000, base - random.randint(100, 5_000))
+                else:
+                    price = max(10_000, base + random.randint(100, 5_000))
                 shares = random.choice([100, 200, 300, 500, 1_000, 2_500])
 
                 live_orders[ref] = (symbol, side, price, shares, locate)
@@ -241,7 +244,11 @@ def generate_itch_file(output_path: str, num_messages: int):
                 next_ref += 1
                 new_ref    = next_ref
                 new_shares = random.choice([100, 200, 500, 1_000])
-                new_price  = max(10_000, price + random.randint(-2_000, 2_000))
+                base = BASE_PRICES[sym]
+                if side == b'B':
+                    new_price = max(10_000, base - random.randint(100, 5_000))
+                else:
+                    new_price = max(10_000, base + random.randint(100, 5_000))
 
                 live_orders[new_ref] = (sym, side, new_price, new_shares, loc)
                 write_msg(f, build_replace(ts_ns, loc, old_ref, new_ref, new_shares, new_price))
