@@ -1,0 +1,54 @@
+# Build artifacts
+build/
+bin/
+obj/
+*.o
+*.out
+*.exe
+*.dll
+*.so
+*.dylib
+
+# Data files (can be large)
+data/*.itch
+data/*.ITCH50
+data/*.gz
+data/*.pcap
+
+# Log files
+logs/
+*.log
+*.csv
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Personal reference (keep out of public repo)
+personal_reference/
+
+# Build system (platform-specific, not committed)
+Makefile
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+*.cmake
+
+# Test outputs
+test_results/
+*.test
+
+# Profiling and debugging
+gmon.out
+callgrind.out.*
+massif.out.*
+perf.data
+perf.data.old
+
+# Temporary files
+*.tmp
+.cache/
